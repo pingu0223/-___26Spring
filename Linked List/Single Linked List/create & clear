@@ -54,6 +54,30 @@ class LinkedList{
 			cout<<"已成功释放内存"<<endl;
 		}
 友元赋值函数：
+LinkList& operator=(const LinkList& a){
+			if(this == &a) return *this;
+			else {
+				this->clear();
+				//判断空链表
+				if (a.head_==nullptr) {
+				head_=nullptr;length_=0;}
+				else{
+				length_=a.length_;
+				Position p=a.head_;
+				head_=new ListNode{p->data_,nullptr};
+				Position q=head_;
+				while(p->next_!=nullptr){
+					p=p->next_;
+					q->next_=new ListNode{p->data_,nullptr};
+					q=q->next_;
+					
+				}
+				
+		}
+			}
+			return *this;
+			 
+		}
 
 
 
