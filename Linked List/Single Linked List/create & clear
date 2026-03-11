@@ -45,14 +45,13 @@ class LinkedList{
 析构函数：
 ~LinkList(){
 			Position p=head_;
-			Position q=p;
 			while(p!=nullptr){
-				q=p->next_;
+				Position temp=p->next_;
 				delete p;
-				p=q;
+				p=temp;
 			}
 			length_=0;
-			cout<<"已成功释放内存";
+			cout<<"已成功释放内存"<<endl;
 		}
 友元赋值函数：
 
