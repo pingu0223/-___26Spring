@@ -82,7 +82,29 @@ LinkList& operator=(const LinkList& a){
 
 
 
-
+插入：
+	void insert(int i,int data){
+		if(i==1){
+			Position p=head_;
+			head_=new ListNode{data,nullptr};
+			head_->next_=p;
+			length_+=1;
+			return;
+		}
+		if(i<1||i>length_+1) return;
+		Position p=head_;
+		int n=0;
+		for(n=0;n<i-2;n++){
+			p=p->next_; 
+			cout<<"p->data:"<<p->data_<<endl;
+		}
+		//p到达i-1位置,当i=2时直接下面的操作就行~ 
+		Position temp=p->next_;
+		p->next_=new ListNode{data,nullptr};
+		p->next_->next_ =temp;
+		length_+=1;
+		return ;
+		}
 
 
 
