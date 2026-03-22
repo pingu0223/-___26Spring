@@ -1,0 +1,132 @@
+在本题中，你需要使用链表实现一个简化版的 LRU（最近最少使用）缓存机制，链表头部为最近使用，尾部为最久未使用。缓存维护一个固定容量，当接收到一系列数据请求时（每个请求是一个整数），你需要根据以下规则更新缓存：
+
+缓存操作：当请求一个数字时，检查 是否已经存在于缓存（链表）中：命中（hit）： 如果存在，将 对应的节点移到链表的头部（表示最近使用过）。
+未命中（miss）： 如果不存在，则在链表头部插入一个新节点存储 。
+容量限制：缓存的容量初始化为一个固定正整数。当插入新节点后，如果链表的长度超过了容量，则删除链表尾部的节点（即最久未使用的数字）。
+为限制你使用我们给出的链表实现，题目将以函数题的形式给出，并且在判题时会以某些形式输出链表中的元素。已提供大部分代码，你只需要实现时间复杂度为 
+ 的 request 函数即可（具体定义见下面的要求）。
+
+vector<Node*> bucket(100001, nullptr);
+这是哈希~
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ bool request(int x) {
+    // 请在此处实现请求处理
+    //先来在链表中
+    if(bucket[x]!=nullptr){
+        Node* p=bucket[x];
+        if(head==p) return true;
+        if(tail==p){
+            tail=p->prev;
+            p->prev->next=nullptr;
+            p->prev=nullptr;
+            p->next=head;
+            head->prev=p;
+            head=p;
+            return true;
+        }
+        p->next->prev=p->prev;
+        p->prev->next=p->next;
+        head->prev=p;
+        p->next=head;
+        head=p;
+        p->prev=nullptr;
+        return true;
+    }
+    if(head==nullptr){
+        head=new Node{x};
+        tail=head;
+        bucket[x]=head;
+        cacheSize++;
+        return false;
+    }
+    Node* temp=head;
+    head=new Node{x};
+    bucket[x]=head;
+    head->next=temp;
+    temp->prev=head;
+    cacheSize++;
+    if(cacheSize>cacheCapacity){
+        int z=tail->val;
+        bucket[z]=nullptr;
+        temp=tail->prev;
+        temp->next=nullptr;
+        delete tail;
+        tail=temp;
+        cacheSize--;
+    }
+    return false;
+
+
+    遇到的问题：
+    1.不知道原来vector就已经哈希分桶啦
+    2.忽略了整个链表为空的情况
+    努力通过分类让代码不要太乱
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    ai建议
+    🐛 存在的问题
+1. 未处理 cacheCapacity == 0 的情况
+当缓存容量为 0 时，任何请求都不应该缓存，应直接返回 false。
+当前代码会尝试创建节点，然后因超出容量又删除，不仅浪费，还可能在删除时访问空指针。
+
+2. 删除尾部节点时存在空指针风险
+当链表只有一个节点时，插入新节点后 cacheSize 变为 2，如果 cacheCapacity == 1，就会触发删除尾部节点。
+此时 tail 是原来的唯一节点，它的 prev 是 nullptr。代码中：
+
+cpp
+temp = tail->prev;   // temp = nullptr
+temp->next = nullptr; // 崩溃！
+之后也没有将 head 或 tail 置为正确的值。
+
+3. 删除尾部节点后未正确处理链表变空的情况
+如果容量为 1，插入新节点后删除原节点，最终链表应该只有一个新节点（即 head 和 tail 都指向它）。
+你的代码在删除时直接把 tail 赋值为 temp（即原节点的前驱），若原节点是唯一节点，temp 为 nullptr，导致 tail 变成 nullptr，而 head 仍指向新节点，链表状态错误。
+
+4. 移动节点的代码可以更简洁
+你分别处理了“尾部”和“中间”两种情况，其实可以统一为“摘除节点 → 插入头部”的逻辑，减少重复代码。
+
+✅ 改进建议
+1. 开头添加容量为 0 的快速返回
+cpp
+if (cacheCapacity == 0) return false;
+2. 修正删除尾部节点的逻辑
+cpp
+if (cacheSize > cacheCapacity) {
+    Node* oldTail = tail;
+    int z = oldTail->val;
+    bucket[z] = nullptr;          // 清除桶中的指针
+    tail = oldTail->prev;          // 新尾部是原尾部的 prev
+    if (tail) tail->next = nullptr;
+    else head = nullptr;           // 链表变为空
+    delete oldTail;
+    cacheSize--;
+}
+3. 简化移动节点的代码（可选）
+可以将命中节点移到头部的逻辑统一为：
+
+cpp
+// 如果 p 不是头节点
+if (p != head) {
+    // 将 p 从原位置摘除
+    if (p->prev) p->prev->next = p->next;
+    if (p->next) p->next->prev = p->prev;
+    if (p == tail) tail = p->prev;  // 如果 p 是尾节点，更新 tail
+
+    // 插入到头部
+    p->prev = nullptr;
+    p->next = head;
+    head->prev = p;
+    head = p;
+}
+这样不需要单独处理 tail 情况，逻辑更清晰。
+
+📊 性能分析
+时间复杂度：O(1) 符合要求。
+
+空间复杂度：O(容量 + 值域大小)（因为 bucket 固定大小）。
+
+代码复用性：移动和插入的指针操作可以提取成辅助函数，但当前规模下可以接受。
+
+🎯 结论
+你的实现核心机制正确，但边界处理不够健壮，因此不是最优写法。修复上述 bug 后，就可以成为一个干净、正确的 LRU 缓存实现。
+
+}
