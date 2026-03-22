@@ -1,0 +1,349 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+题干————判题程序
+#include<bits/stdc++.h>
+using namespace std;
+
+#define fast ios::sync_with_stdio(false),cin.tie(0),cout.tie(0)
+
+struct node{
+    int c;
+    int e;
+    node *next;
+    node(){}
+    node(int c,int e):c(c),e(e),next(NULL){}
+};
+class Polynomial{
+    private:
+        node* head;
+    public:
+        Polynomial();// 默认构造函数
+        Polynomial(const Polynomial& other);// 拷贝构造函数
+        Polynomial& operator=(const Polynomial& other);// 赋值运算符重载
+        ~Polynomial();// 析构函数
+        void insert(int c, int e);// 参数 c 表示系数，e 表示指数。
+        Polynomial derivative();// 根据每项的指数进行求导，新的系数是原系数乘以指数，指数减 1
+        void print();//打印函数：按顺序打印多项式的每一项
+        void clear();// 清除函数：释放链表中所有节点的内存并将头指针置为 NULL
+};
+Polynomial::Polynomial():head(NULL){}
+Polynomial::Polynomial(const Polynomial& other) : head(NULL) {
+    if (other.head == NULL) return;
+
+    head = new node(other.head->c, other.head->e);
+    node* current = head;
+    node* other_current = other.head->next;
+
+    while (other_current != NULL) {
+        current->next = new node(other_current->c, other_current->e);
+        current = current->next;
+        other_current = other_current->next;
+    }
+}
+Polynomial& Polynomial::operator=(const Polynomial& other) {//赋值运算符重载
+    if (this == &other) {
+        return *this;
+    }
+
+    clear();
+
+    if (other.head != NULL) {
+        head = new node(other.head->c, other.head->e);
+        node* current = head;
+        node* other_current = other.head->next;
+
+        while (other_current != NULL) {
+            current->next = new node(other_current->c, other_current->e);
+            current = current->next;
+            other_current = other_current->next;
+        }
+    }
+
+    return *this;
+}
+void Polynomial::clear() {
+    node* now = head;
+    while (now != NULL) {
+        node* tmp = now;
+        now = now->next;
+        delete tmp;
+    }
+    head = NULL;
+}
+Polynomial::~Polynomial(){
+    clear();
+}
+void Polynomial::print(){
+    node* now = head;
+    if(now==NULL){
+        cout << "0" << endl;
+        return;
+    }
+    while(now!=NULL){
+        cout<<now->c<<"x^"<<now->e<<" ";
+        now=now->next;
+    }
+    cout << endl;
+}
+
+/* 你的代码将会被嵌入在这个位置 */
+
+signed main(){
+    Polynomial p;
+    int n;cin>>n;
+    for(int i=0;i<n;i++){
+        int c,e;cin>>c>>e;
+        p.insert(c,e);
+    }
+    Polynomial p2 = p.derivative();
+    p2.print();
+
+}
+todo
+1.完成insert函数，使之可以按指数降序插入新node
+2.完成求导函数，使之可以返回一个求导后的链表
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+原解:(ac版本）
+void Polynomial::insert(int c,int e){
+    //TODO
+    //先遍历
+    node* p=head;
+    if(head==nullptr){
+        head=new node{c,e};
+        return;
+    }
+    if(head->e<e){
+        node* temp=head;
+        head=new node{c,e};
+        head->next=temp;
+        return;
+    }
+    while(p->next!=nullptr){
+        if(p->next->e<=e){
+            node* temp=p->next;
+            p->next=new node{c,e};
+            p->next->next=temp;
+            return;
+        }
+        p=p->next;
+    }
+    //这时p就是指向了最后一个结点
+    p->next=new node{c,e};
+
+}
+Polynomial Polynomial::derivative(){
+    //TODO
+    if(head==nullptr) {
+        Polynomial a;
+        return a;
+    }
+    if(head->next==nullptr){
+        Polynomial a;
+        if(head->e==0){
+            return a;
+        }
+        int new_c=head->c * head->e;
+        int new_e = head->e -1;
+        a.head=new node{new_c,new_e};
+        return a;
+    }
+    node* p=head;
+    Polynomial result;
+    int new_c=p->c * p->e;
+    int new_e=p->e - 1;
+    result.head=new node{new_c,new_e};
+    p=p->next;
+    node* temp=result.head;
+    while(p->next!=nullptr){
+        int new_c=p->c * p->e;
+        int new_e=p->e -1;
+        temp->next=new node{new_c,new_e};
+        //更新条件
+        temp=temp->next;
+        p=p->next;
+    }
+    if(p->e!=0){
+        int new_c=p->c * p->e;
+        int new_e=p->e -1;
+        temp->next=new node{new_c,new_e};
+    }
+    return result;
+    
+}
+
+！！！！曾经出现的问题
+1.在插入时忽略头结点的维护
+2.使用递减符号导致原式也出现问题了
+3.插入的四种情况都很重要！！！！
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ai批改后：
+多项式链表实现 – 代码审查与改进建议
+概述
+该代码实现了一个基于链表的 Polynomial 类，支持插入项、求导、拷贝控制（深拷贝）和打印。整体结构清晰，内存管理正确，但在插入合并同类项、求导零系数过滤和代码简洁性方面存在优化空间。
+
+✅ 优点
+正确实现了深拷贝构造函数、赋值运算符重载和析构函数，避免内存泄漏。
+
+链表插入时保持了指数降序排列。
+
+求导函数考虑了边界情况（空链表、常数项）。
+
+使用 node 结构体与构造函数，代码可读性较好。
+
+⚠️ 存在的问题与改进建议
+1. 插入函数 – 未合并同类项
+现状：当插入一个已存在指数的项时，会在原节点前插入新节点，导致多项式中出现相同指数的项。
+
+cpp
+// 当前代码（片段）
+while(p->next != nullptr) {
+    if(p->next->e <= e) {
+        node* temp = p->next;
+        p->next = new node{c, e};
+        p->next->next = temp;
+        return;
+    }
+    p = p->next;
+}
+改进：应判断 p->next->e == e 时合并系数，若系数为 0 则删除该节点。
+
+cpp
+void Polynomial::insert(int c, int e) {
+    if (c == 0) return; // 系数为 0 无需插入
+
+    node* prev = nullptr;
+    node* curr = head;
+
+    // 寻找插入位置（指数降序）
+    while (curr && curr->e > e) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr && curr->e == e) {
+        // 合并同类项
+        curr->c += c;
+        if (curr->c == 0) {
+            // 删除该节点
+            if (prev) prev->next = curr->next;
+            else head = curr->next;
+            delete curr;
+        }
+        return;
+    }
+
+    // 创建新节点并插入
+    node* newNode = new node(c, e);
+    if (prev == nullptr) {
+        newNode->next = head;
+        head = newNode;
+    } else {
+        newNode->next = curr;
+        prev->next = newNode;
+    }
+}
+2. 求导函数 – 可能产生零系数项或负指数
+现状：对常数项（指数为 0）会生成系数为 0 的项，并出现指数 -1。
+
+cpp
+int new_c = p->c * p->e;
+int new_e = p->e - 1;
+temp->next = new node{new_c, new_e}; // 当 new_c == 0 时仍插入
+改进：只在系数非零时插入节点。
+
+cpp
+Polynomial Polynomial::derivative() {
+    Polynomial result;
+    node** tail = &result.head; // 指向尾指针的指针
+
+    for (node* p = head; p != nullptr; p = p->next) {
+        int new_c = p->c * p->e;
+        int new_e = p->e - 1;
+        if (new_c != 0) {
+            *tail = new node{new_c, new_e};
+            tail = &((*tail)->next);
+        }
+    }
+    return result;
+}
+3. 代码冗余与可读性
+拷贝构造函数和赋值运算符中有重复的链表复制代码，可抽取私有方法 void copyFrom(const Polynomial& other) 复用。
+
+求导函数中分别处理首节点、中间节点、尾节点的写法可统一为循环。
+
+改进：通过指针的指针或引用简化链表操作，减少重复代码。
+
+4. 未启用 IO 速度优化
+cpp
+#define fast ios::sync_with_stdio(false),cin.tie(0),cout.tie(0)
+问题：定义了宏但未调用。应在 main 函数第一行加上 fast;。
+
+cpp
+signed main() {
+    fast; // 启用快速 IO
+    // ...
+}
+5. 风格不一致与潜在未定义行为
+混用 NULL 和 nullptr，建议统一使用 nullptr。
+
+node 的默认构造函数未初始化成员，可能导致随机值。建议显式初始化：
+
+cpp
+node() : c(0), e(0), next(nullptr) {}
+🔧 改进后的代码片段示例
+插入函数（合并同类项）
+cpp
+void Polynomial::insert(int c, int e) {
+    if (c == 0) return;
+    node* prev = nullptr;
+    node* curr = head;
+    while (curr && curr->e > e) {
+        prev = curr;
+        curr = curr->next;
+    }
+    if (curr && curr->e == e) {
+        curr->c += c;
+        if (curr->c == 0) {
+            if (prev) prev->next = curr->next;
+            else head = curr->next;
+            delete curr;
+        }
+        return;
+    }
+    node* newNode = new node(c, e);
+    if (prev == nullptr) {
+        newNode->next = head;
+        head = newNode;
+    } else {
+        newNode->next = curr;
+        prev->next = newNode;
+    }
+}
+求导函数（简洁版）
+cpp
+Polynomial Polynomial::derivative() {
+    Polynomial result;
+    node** tail = &result.head;
+    for (node* p = head; p; p = p->next) {
+        int new_c = p->c * p->e;
+        int new_e = p->e - 1;
+        if (new_c != 0) {
+            *tail = new node(new_c, new_e);
+            tail = &((*tail)->next);
+        }
+    }
+    return result;
+}
+📌 总结
+该实现已经具备了多项式链表的基本功能，通过上述改进可以：
+
+保证多项式表示的唯一性（合并同类项）
+
+避免无意义的零系数项
+
+提高代码复用性和可维护性
+
+修复潜在的未定义行为
+
+建议将改进后的代码合并至项目，并通过测试验证功能正确性。
+
