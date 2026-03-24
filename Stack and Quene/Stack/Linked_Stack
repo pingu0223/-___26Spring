@@ -1,0 +1,195 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+我写的链表栈
+#include <iostream>
+using SElemSet=int;
+using Position=Node*;
+using namespace std;
+struct Node{
+    SElemSet data_;
+    Node* next_;
+    Node(SElemSet a,Node* b){
+        data_=a;next_=b;
+    }
+};
+class Stack{
+    private:
+    int size_;
+    Position top_;
+    public:
+    Stack(){
+        size_=0;
+        top_=nullptr;
+    }
+    Stack(const Stack& other){
+        if(other.IsEmpty()){
+            top_=nullptr;
+            size_=0;
+            return;
+        }
+        size_=other.size_;
+        top_=new Node{other.top_->data_,nullptr};
+        Position temp=other.top_;
+        Position p=top_;
+        while(temp->next_!=nullptr){
+            p->next_=new Node{temp->next_->data_,nullptr};
+            p=p->next_;
+            temp=temp->next_;
+        }
+
+    }
+    Stack& operator=(const Stack& other){
+        if(&other==this) return *this;
+        size_=other.size_;
+        Position p=top_;
+        while(p!=nullptr){
+            Position temp=p->next_;
+            delete p;
+            p=temp;
+        }
+        if(other.IsEmpty()){
+            top_=nullptr;
+            return *this;
+        }
+        Position temp=other.top_;
+        top_=new Node{other.top_->data_,nullptr};
+        p=top_;
+        while(temp->next_!=nullptr){
+            p->next_=new Node{temp->next_->data_,nullptr};
+            p=p->next_;
+            temp=temp->next_;
+        }
+        return *this;
+    }
+    ~Stack(){
+        if(top_==nullptr) return;
+        Position p=top_;
+        while(p!=nullptr){
+            Position temp=p->next_;
+            delete p;
+            p=temp;
+        }
+    }
+    bool IsEmpty()const{
+        if(top_==nullptr) return true;
+        return false;
+    }
+    void Push(SElemSet a){
+        top_=new Node{a,top_};
+        size_++;
+    }
+    SElemSet Top()const{
+        if(top_==nullptr){
+            cout<<"栈是空的"<<endl;
+            return -1;
+        }
+        return top_->data_;
+    }
+    void Pop(){
+        if(size_==0){cout<<"栈是空的"<<endl;return;}
+        Position temp=top_->next_;
+        delete top_;
+        top_=temp;
+        size_--;
+    }
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+出现问题：
+1.对于赋值的栈为空的处理不对（不应该创建临时对象）
+2.异常处理
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ai更改后的代码：
+#include <iostream>
+
+using SElemSet = int;
+
+struct Node {
+    SElemSet data_;
+    Node* next_;
+    Node(SElemSet d, Node* n = nullptr) : data_(d), next_(n) {}
+};
+
+class Stack {
+private:
+    int size_;
+    Node* top_;
+
+    // 私有辅助函数：复制另一个栈的内容到当前对象（假定当前对象为空）
+    void copyFrom(const Stack& other) {
+        if (other.top_ == nullptr) return;
+        top_ = new Node(other.top_->data_);
+        Node* src = other.top_->next_;
+        Node* dest = top_;
+        while (src) {
+            dest->next_ = new Node(src->data_);
+            dest = dest->next_;
+            src = src->next_;
+        }
+        size_ = other.size_;
+    }
+
+public:
+    // 默认构造
+    Stack() : size_(0), top_(nullptr) {}
+
+    // 拷贝构造
+    Stack(const Stack& other) : size_(0), top_(nullptr) {
+        copyFrom(other);
+    }
+
+    // 赋值运算符（copy-and-swap）
+    Stack& operator=(Stack other) {   // 传值，自动调用拷贝构造
+        swap(*this, other);
+        return *this;
+    }
+
+    // 析构
+    ~Stack() {
+        while (top_) {
+            Node* temp = top_->next_;
+            delete top_;
+            top_ = temp;
+        }
+    }
+
+    // 交换
+    friend void swap(Stack& a, Stack& b) noexcept {
+        using std::swap;
+        swap(a.size_, b.size_);
+        swap(a.top_, b.top_);
+    }
+
+    bool IsEmpty() const { return top_ == nullptr; }
+    int Size() const { return size_; }
+
+    void Push(SElemSet x) {
+        top_ = new Node(x, top_);
+        ++size_;
+    }
+
+    SElemSet Top() const {
+        if (IsEmpty()) {
+            std::cout << "栈是空的" << std::endl;
+            return -1;   // 假设 -1 不是合法元素
+        }
+        return top_->data_;
+    }
+
+    void Pop() {
+        if (IsEmpty()) {
+            std::cout << "栈是空的" << std::endl;
+            return;
+        }
+        Node* temp = top_->next_;
+        delete top_;
+        top_ = temp;
+        --size_;
+    }
+};
+
+
+
+
+
+
+
+
