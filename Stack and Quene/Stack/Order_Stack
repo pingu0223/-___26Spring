@@ -1,0 +1,148 @@
+顺序存储版本栈
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <iostream>
+using namespace std;
+using Position=int;
+using SElemSet=int;
+class Stack{
+    private:
+    int capacity_;
+    SElemSet* data_;
+    Position top_;
+    public:
+    Stack(int a){
+        capacity_=a;
+        data_=new SElemSet[a];
+        top_=-1;
+    }
+    Stack(const Stack& a){
+        capacity_=a.capacity_;
+        data_=new SElemSet[capacity_];
+        int i=0;
+        for(i;i<=a.top_;i++){
+            data_[i]=a.data_[i];
+        }
+        top_=a.top_;
+    }
+    Stack& operator=(const Stack& a){
+        if(&a==this) return *this;
+        delete data_;
+        capacity_=a.capacity_;
+        data_=new SElemSet[capacity_];
+        int i=0;
+        for(i;i<=a.top_;i++){
+            data_[i]=a.data_[i];
+        }
+        top_=a.top_;
+        return *this;
+    }
+    ~Stack(){
+        capacity_=0;
+        top_=-1;
+        delete data_;
+    }
+    int Length()const{
+        return top_+1;
+    }
+    bool IsFull()const{
+        if(top_+1==capacity_) return true;
+        return false;
+    }
+    bool IsEmpty()const{
+        if(top_==-1) return true;
+        return  false;
+    }
+    void Push(SElemSet x){
+        if(this->IsFull()){
+            cout<<"栈满了"<<endl;
+            return;
+        }
+        data_[top_+1]=x;
+        top_++;
+    }
+    SElemSet Top()const{
+        if(this->IsEmpty()){
+            cout<<"栈是空的"<<endl;
+            return -1;
+        }
+        return data_[top_];
+    }
+    void Pop(){
+        if(this->IsEmpty()){
+            cout<<"栈是空的"<<endl;
+            return;
+        }
+        top_--;
+    }
+};
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ai修改版：
+#include <iostream>
+using namespace std;
+
+using SElemSet = int;   // 栈元素类型
+
+class Stack {
+private:
+    int capacity_;
+    SElemSet* data_;
+    int top_;            // 栈顶索引，-1 表示空
+
+public:
+    // 构造函数
+    explicit Stack(int a) : capacity_(a), data_(new SElemSet[a]), top_(-1) {}
+
+    // 拷贝构造函数
+    Stack(const Stack& a) : capacity_(a.capacity_), data_(new SElemSet[a.capacity_]), top_(a.top_) {
+        for (int i = 0; i <= top_; ++i) data_[i] = a.data_[i];
+    }
+
+    // 赋值运算符（使用拷贝并交换，简洁且安全）
+    Stack& operator=(Stack a) {   // 传值，自动调用拷贝构造
+        swap(*this, a);
+        return *this;
+    }
+
+    // 析构函数
+    ~Stack() {
+        delete[] data_;
+    }
+
+    // 交换函数（用于赋值）
+    friend void swap(Stack& first, Stack& second) noexcept {
+        using std::swap;
+        swap(first.capacity_, second.capacity_);
+        swap(first.data_, second.data_);
+        swap(first.top_, second.top_);
+    }
+
+    int Length() const { return top_ + 1; }
+    bool IsFull() const { return top_ + 1 == capacity_; }
+    bool IsEmpty() const { return top_ == -1; }
+
+    void Push(SElemSet x) {
+        if (IsFull()) {
+            cout << "栈满了" << endl;
+            return;
+        }
+        data_[++top_] = x;   // 先自增再赋值，简洁
+    }
+
+    SElemSet Top() const {
+        if (IsEmpty()) {
+            cout << "栈是空的" << endl;
+            return -1;   // 假设 -1 不会作为合法元素
+        }
+        return data_[top_];
+    }
+
+    void Pop() {
+        if (IsEmpty()) {
+            cout << "栈是空的" << endl;
+            return;
+        }
+        --top_;
+    }
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////
