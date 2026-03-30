@@ -6,3 +6,123 @@
 利用栈计算前缀表达式：递归or倒序
 利用栈计算中缀表达式：双栈法+优先级表示
   /* todo  */
+后缀表达式：一定要注意减法与除法的运算关系！！！
+#include <iostream>
+#include <string>
+using namespace std;
+struct Node{
+    int data;
+    Node* next_;
+    Node(int x){data=x;next_=nullptr;}
+};
+class stack{
+    private:
+    Node* top_;
+    int size_;
+    public:
+    stack(){
+        top_=nullptr;size_=0;
+    }
+    ~stack(){
+        Node* temp=top_;
+        while(temp!=nullptr){
+            Node* p=temp->next_;
+            delete temp;
+            temp=p;
+        }
+    }
+    void Push(int x){
+        Node* temp=top_;
+        top_=new Node{x};
+        top_->next_=temp;
+        size_++;
+    }
+    void Pop(){
+        if(size_==0) return;
+        size_--;
+        Node* temp=top_->next_;
+        delete top_;
+        top_=temp;
+    }
+    int Top(){
+        return top_->data;
+    }
+    bool isEmpty(){
+        if(size_==0) return true;
+        return false;
+    }
+};
+int main(){
+    string a;
+    cin>>a;
+    int i=0;
+    stack x;
+    for(i=0;i<a.size();i++){
+        if(a[i]=='+') {
+            if(x.isEmpty()) break;
+            int a=x.Top();
+            x.Pop();
+            int b=x.Top();
+            x.Pop();
+            x.Push(a+b);
+        }
+        else if(a[i]=='-'){
+            int a=x.Top();
+            x.Pop();
+            int b=x.Top();
+            x.Pop();
+            x.Push(b-a);
+        }
+        else if(a[i]=='*'){
+            int a=x.Top();
+            x.Pop();
+            int b=x.Top();
+            x.Pop();
+            x.Push(a*b);
+        }
+        else if(a[i]=='/'){
+            int a=x.Top();
+            x.Pop();
+            int b=x.Top();
+            if(b==0) break;
+            x.Pop();
+            x.Push(b/a);
+        }
+        else{
+            int c=(a[i]-'0');
+            x.Push(c);
+        }
+    }
+    cout<<"result: "<<x.Top()<<endl;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+前缀表达式————递归：
+#include <iostream>
+#include <string>
+using namespace std;
+int calculate(){
+    char a;
+    cin>>a;
+    if(a=='+'){
+        return calculate()+calculate();
+    }
+    if(a=='-'){
+        return calculate()-calculate();
+    }
+    if(a=='*'){
+        return calculate()*calculate();
+    }
+    if(a=='/'){
+        return calculate()/calculate();
+    }
+    else return (int)(a-'0');
+}
+int main(){
+    int result=calculate();
+    cout<<result<<endl;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+中缀表达式：双栈问题，运算符优先级
+
+
+
