@@ -1,0 +1,7 @@
+如何引入dimmy Node？
+ListNode* dimmy=new ListNode{0};
+dimmy->next=head;
+head=dimmy;
+
+
+在返回时只需要返回head->next;
