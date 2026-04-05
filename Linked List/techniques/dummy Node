@@ -1,0 +1,7 @@
+如何引入dummy Node？
+ListNode* dummy=new ListNode{0};
+dummy->next=head;
+head=dummy;
+
+
+在返回时只需要返回head->next;
