@@ -1,3 +1,4 @@
+
 #KMP.md
 本质：让机器模拟人眼，看到从模式串的第几个元素匹配失败后就知道下一次从模式串的第几个元素比较，节省时间与效率
 
@@ -22,3 +23,26 @@ next[j]
 k的max求值为j-1，min取值为0
 暴力做法：从j-1求起，一直到0
 智慧做法：已知j-1的为k，则最大为k+1
+
+求next数组的代码：
+#include <iostream>
+#include <string>
+using namespace std;
+int main(){
+    string t;
+    cin>>t;
+    int next[t.size()];
+    next[0]=-1;next[1]=0;
+    int m=2;
+    for(m;m<t.size();m++){
+        int k=next[m-1];
+        while(k>=0&&t[m-1]!=t[k]){
+            k=next[k];
+        }
+        next[m]=k+1;
+    }
+    int i=0;
+    for(i=0;i<t.size();i++){
+        cout<<next[i]<<" ";
+    }
+}
