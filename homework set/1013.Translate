@@ -1,0 +1,31 @@
+//经过层层修改后终于AC，最大的问题在于和输入输出的相处~
+如何根据空格判断？那么需要利用getlin(cin,string_name)来读取
+如果string的为空则为空行！
+然后中间用空格分割，没有python那么我们用find记录pos（当然最好用size_t类型的啦），记录好了后再用substr
+然后最后判断输入终止只需要getline~
+
+#include <iostream>
+#include <string>
+#include <unordered_map>
+using namespace std;
+int main(){
+    string s;
+    string ori;
+    string spe;
+    unordered_map<string,string>list;
+    while(getline(cin,s)){
+        if(s.empty())break;//判断空行只需要一个break
+        int pos=s.find(' ');
+        string ori=s.substr(0,pos);
+        string spe=s.substr(pos+1);
+        list[spe]=ori;
+    }
+    
+    while(getline(cin,s)){//会自动判断是否结束
+        if(list.find(s)==list.end()){
+            cout<<"eh\n";
+        }
+        else cout<<list[s]<<'\n';
+    }
+    
+}
