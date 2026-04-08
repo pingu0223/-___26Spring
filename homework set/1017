@@ -1,0 +1,50 @@
+千万要注意有没有size_!否则因为size_妹维护，在这里哐哐debug半天太亏了TT
+void Push(int element) {
+  // TODO
+  if(this->Empty())top_=new Node{element,nullptr};
+  else{
+    top_=new Node{element,top_};
+  }
+  size_++;
+}
+int Top() {
+  // TODO
+  return top_->element_;
+}
+void Pop() {
+  // TODO
+  if(this->Empty()) return;
+  Node* temp=top_;
+  top_=top_->next_;
+  size_--;
+  delete temp;
+}
+bool Empty() {
+  // TODO
+  return top_==nullptr;
+}
+static void GetAns(int n, std::string out_seq) {
+  // TODO
+  MyStackAndGetAns result;
+  int i;
+  int item;
+  int j=1;
+  for(i=0;i<n;i++){
+    item=out_seq[i]-'0';
+    if(result.Empty()||result.Top()<item){
+    while(j<=item){
+            result.Push(j);
+            j++;
+        }
+        result.Pop();
+        continue;}
+    else if(result.Top()==item){
+        result.Pop();
+    }
+    else {std::cout<<"no"<<'\n'; return;}
+  }
+  if(result.Empty()){std::cout<<"yes"<<'\n'; return;}
+  std::cout<<"no"<<'\n';
+}
+注意！考虑栈如何模拟呀呀呀！
+
