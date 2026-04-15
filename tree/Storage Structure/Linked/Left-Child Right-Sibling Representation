@@ -1,0 +1,6 @@
+孩子-兄弟表达法：记录自己的第一个（最左边的）孩子以及右边紧挨着的兄弟
+struct NODE{
+Elemtype data_;
+NODE* first_Child;
+NODE* next_Sibling;
+};
