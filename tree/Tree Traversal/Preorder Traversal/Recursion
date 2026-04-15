@@ -1,0 +1,14 @@
+struct NODE{
+  int data_;
+  NODE* child[10]; 
+};
+void Preorder_Travelorsal(NODE* root, int m){
+    if(root==nullptr) return;
+    int i;
+    cout<<root->data_;
+    for(i=0;i<m;i++){
+        if(root->child[i]!=nullptr) 
+        Preorder_Travelorsal(root->child[i],m);
+    }
+}
+注意后面在child里面遍历~
