@@ -1,0 +1,6 @@
+在标准形式的基础上再存一下父母啦啦啦
+struct NODE{
+Elemtype data_;
+NODE* child[m];
+NODE* parent;
+};
