@@ -1,0 +1,23 @@
+！！使用队列存储子树结点
+然后每次循环都在拿子结点继续当父节点
+struct NODE{
+    int data_;
+    NODE* child[10];
+};
+void Level_Order_Traversal(NODE* root, int m){
+queue<NODE*>Q;
+if(root==nullptr) return;
+int i=0;
+NODE* current=nullptr;
+Q.push(root);
+while(!Q.empty()){
+current=Q.front();
+cout<<Q.front()->data_;
+for(i=0;i<m;i++){
+    if(current->child[i]!=nullptr){
+        Q.push(current->child[i]);
+    }
+}
+Q.pop();
+}
+}
