@@ -1,0 +1,6 @@
+标准存储结构：
+存储data与child指针数组
+struct NODE{
+Elemtype data_;
+NODE* child[m];//m为最大的度
+};
