@@ -1,0 +1,6 @@
+逆形式存储：(存储data与父结点)
+struct NODE{
+Elemtype data_;
+NODE* Parent_;
+}
+//如果是根结点那么parent为空
