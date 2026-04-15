@@ -1,0 +1,15 @@
+（？）一个小小的疑惑：后序遍历是怎么遍历呢？根节点不会被重复输出吗？
+解释：首先按后续遍历根节点的各棵子树，然后访问根节点
+struct NODE{
+  int data_;
+  NODE* child[10]; 
+};
+void Postorder_Traversal(NODE* root, int m){
+   if(root==nullptr) return;
+   int i;
+   for(i=0;i<m;i++){
+    if(root->child[i]!=nullptr)
+    Postorder_Traversal(root->child[i],m);
+   }
+   cout<<root->data_;
+}
