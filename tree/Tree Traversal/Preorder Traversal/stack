@@ -1,0 +1,21 @@
+struct NODE{
+    int data_;
+    NODE* child[10];
+};
+void preordered(NODE* root, int m){
+    if(root==nullptr) return;
+    stack<NODE*>list;
+    list.push(root);
+    while(!list.empty()){//这里的条件应该是stack不为空
+        NODE* current=list.top();
+        cout<<current->data_<<endl;
+        list.pop();//这里就应该pop掉，要不然就被子结点压住了，无法出栈了
+        int i;
+        for(i=m-1;i>=0;i--){//注意这里是反着入栈的哦，因为后入先出
+            if(current->child[i]!=nullptr){
+                list.push(current->child[i]);
+            }
+        }
+    }
+}
+//用stack去存储子结点
