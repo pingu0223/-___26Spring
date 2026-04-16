@@ -1,0 +1,29 @@
+struct NODE{
+    int data_;
+    NODE* child[10];
+};
+void postorder_traversal(NODE* root,int m){
+    stack<NODE*>storage;
+    stack<bool>mark;
+    storage.push(root);
+    mark.push(false);
+    while(!storage.empty()){
+        while(mark.top()==true){
+            cout<<storage.top()->data_<<endl;
+            storage.pop();
+            mark.pop();//!!!!!!不要忘记出栈mark!!!!!!!!!!
+        }
+        if(storage.empty())return;
+        NODE* current=storage.top();
+        int i;
+        mark.pop();
+        mark.push(true);
+        for(i=m-1;i>=0;i--){
+            if(current->child[i]!=nullptr){
+                storage.push(current->child[i]);
+                mark.push(false);
+            }
+        }
+
+    }
+}
