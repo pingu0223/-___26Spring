@@ -1,0 +1,31 @@
+#include <iostream>
+using namespace std;
+struct NODE{
+    int data_;
+    NODE* child[10]={nullptr};
+};
+//?怎么存储父结点的呀？是会输入父节点的索引滴
+int main(){
+    int N;
+    cin>>N;
+    int m=10;
+    NODE* aggress_[N]={nullptr};
+    int i;
+    int data;
+    int parent;
+    for(i=0;i<N;i++){
+        cin>>data;
+        cin>>parent;
+        aggress_[i]=new NODE{data};
+        if(parent!=-1){
+            int j=0;
+            for(j=0;j<m;j++){
+                if(aggress_[parent]->child[j]==nullptr){
+                    aggress_[parent]->child[j]=aggress_[i];
+                    break;
+                }
+            }
+        }
+    }
+    NODE* root=aggress_[0];
+}
