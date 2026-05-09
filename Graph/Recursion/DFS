@@ -1,0 +1,28 @@
+void DFS(Graph&g,vector<bool>&V,int u){
+    V[u]=true;
+    cout<<u<<":";
+    vector<Edge>E=g.neighbors(u);
+    int i;
+    for(i=0;i<E.size();i++){
+        if(V[E[i].to]==false){
+            cout<<u<<"—>"<<E[i].to<<endl;
+            DFS(g,V,E[i].to);
+        }
+    }
+    return;
+}
+int main(){
+    int n=10;
+    Graph a{n,true};
+    //省略一些输入过程
+    vector<bool>v(n,false);//居然这样写 vector<Type>v(个数，初始量);
+    int i=0;
+    for(i=0;i<a.vertexCount();i++){
+        if(v[i]==false){
+        cout << "DFS starting at node " << i << ":\n";
+        DFS(a,v,i);
+        cout<<endl;
+    }
+    }
+    return 0;
+}
