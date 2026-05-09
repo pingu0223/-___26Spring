@@ -1,0 +1,31 @@
+ void BFS()const{
+        vector<bool>V(n,false);
+        int i;
+        queue<int>Q;//Q队列里存结点
+        queue<int>d;
+        int depth;
+        for(i=0;i<n;i++){
+            depth=0;
+            if(V[i]==false)
+                {Q.push(i);
+                V[i]=true;//别忘记标记已经访问过的结点
+                d.push(depth);
+                while(!Q.empty()){
+                cout<<Q.front()<<" ";
+                int j;
+                depth=d.front();
+                d.pop();
+                for(j=0;j<this->adj[Q.front()].size();j++){
+                    if(V[this->adj[Q.front()][j].to]==false){
+                    V[this->adj[Q.front()][j].to]=true;
+                    Q.push(this->adj[Q.front()][j].to);
+                    d.push(depth+1);
+                }
+            }
+            Q.pop();
+            }
+            
+        }
+        }
+    }
+注意深度的记录
