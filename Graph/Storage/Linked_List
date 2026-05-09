@@ -1,0 +1,39 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+struct Edge{
+    int to;
+    int weight;
+};
+class Graph{
+    private:
+    int n;
+    bool directed;
+    vector<vector<Edge>> adj;
+    public:
+    Graph(int n, bool directed=false):n(n),directed(directed),adj(n){}
+    void addEdge(int u,int v,int w=1){
+        adj[u].push_back({v,w});
+        if(!directed){
+            adj[v].push_back({u,w});
+        }
+    }
+    void print()const{
+        int i=0;
+        int j=0;
+        for(i=0;i<n;i++){
+            cout<<i<<":";
+            for(j;j<adj[i].size();j++){
+                cout<<"("<<adj[i][j].to<<","<<adj[i][j].weight<<")";
+            }
+            cout<<endl;
+        }
+    }
+    const vector<Edge>& neighbors(int u)const{
+        return adj[u];
+    }
+    int vertexCound()const{
+        return n;
+    }
+
+};
