@@ -16,4 +16,4 @@ void addEdge(int u, int v, int w){
       }
      head[u]=new Edge{v,w,head[u]};
      }
-'''
+```
