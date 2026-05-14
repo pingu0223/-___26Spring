@@ -1,12 +1,12 @@
 # 最大不同（别忘记空格）
 
-··· text
+``` text
 "关于控制找边的循环，我是用flag看有没有不在连通变量里面的点，而标准解法是直接利用for循环找n-1个边~"
-···
+```
 
 ## 标准代码实现
 
-··· cpp
+``` cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -60,7 +60,7 @@ void prim(vector<vector<long long>>&cost, int n, int start){
     std::cout<<"最小代价是："<<result<<endl;
 
 }
-···
+```
 
 
 
