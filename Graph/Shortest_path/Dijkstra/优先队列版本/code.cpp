@@ -21,6 +21,7 @@ void Dijkstra(vector<vector<Edge>>&E,vector<int>&pre,vector<bool>&v,vector<int>&
     int curr=item;
     dis[item]=0;
     pre[item]=item;
+    cnt[item]=1;
     priority_queue<Node,vector<Node>,cmp>pq;
     pq.push({item,0});
     while(!pq.empty()){
